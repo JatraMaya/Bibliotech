@@ -20,10 +20,10 @@ public class AuthService {
     public UserEntity register(UserEntity user) {
 
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new DuplicateCredentialException("Username of email already exist");
+            throw new DuplicateCredentialException("Username or email already exist");
         }
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new DuplicateCredentialException("Username of email already exist");
+            throw new DuplicateCredentialException("Username or email already exist");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
