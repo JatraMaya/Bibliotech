@@ -15,20 +15,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 @Data
-@Setter
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
@@ -38,29 +31,19 @@ public class UserEntity {
     private UUID id;
 
     @Column(unique = true, nullable = false, length = 10)
-    @Size(min = 3, max = 10, message = "Username must be atleast 3 characters long")
-    @NotBlank(message = "Username is required.")
     private String username;
 
     @Column(nullable = false, length = 10)
-    @Size(min = 3, max = 10, message = "First name must be at least three characters long.")
-    @NotBlank(message = "First name is required.")
     private String firstname;
 
     @Column(nullable = true, length = 10)
-    @Size(min = 3, max = 10, message = "Last name must be at least three characters long.")
     private String lastname;
 
     @Column(nullable = false, length = 100, unique = true)
-    @Size(min = 5, max = 100, message = "Email must be at least 5 characters long.")
-    @Email(message = "Email must be a valid.")
-    @NotBlank(message = "Email is required.")
     private String email;
 
-    @Column(nullable = false, length = 100)
-    @Size(min = 6, max = 100, message = "Password must have at least 6 characters.")
-    @NotBlank(message = "Password is required.")
-    private String hashPassword;
+    @Column(nullable = false, length = 255, name = "hash_password")
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
