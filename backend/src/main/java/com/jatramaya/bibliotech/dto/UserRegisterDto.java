@@ -1,5 +1,7 @@
 package com.jatramaya.bibliotech.dto;
 
+import com.jatramaya.bibliotech.utils.validator.StrongUsername;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,7 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserRegisterDto {
 
-    @Size(min = 3, max = 10, message = "Username must be atleast 3 characters long")
+    @StrongUsername
+    @Size(min = 3, max = 10)
     @NotBlank(message = "Username is required.")
     private String username;
 
