@@ -10,6 +10,8 @@ import com.jatramaya.bibliotech.service.AuthService;
 
 import jakarta.validation.Valid;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +25,7 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDto> register(@Valid @RequestBody UserRegisterDto dto) {
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDto dto) {
         UserEntity user = new UserEntity();
 
         user.setUsername(dto.getUsername());
@@ -41,10 +43,16 @@ public class AuthController {
         } else {
             fullname = saved.getFirstname();
         }
-        RegisterResponseDto response = new RegisterResponseDto();
-        response.setUsername(saved.getUsername());
-        response.setEmail(saved.getEmail());
-        response.setFullname(fullname);
+        RegisterResponseDto result = new RegisterResponseDto();
+        result.setUsername(saved.getUsername());
+        result.setEmail(saved.getEmail());
+        result.setFullname(fullname);
+
+        Map<String, Object> response = Map.of(
+                "status", "success",
+                "message", "user created successfully",
+                "user", result);
+
         return ResponseEntity.ok(response);
     }
 
