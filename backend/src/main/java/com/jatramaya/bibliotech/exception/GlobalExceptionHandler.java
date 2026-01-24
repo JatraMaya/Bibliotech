@@ -1,5 +1,6 @@
 package com.jatramaya.bibliotech.exception;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -21,14 +22,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequest(MethodArgumentNotValidException ex) {
-        String error = ex.getBindingResult().getFieldErrors()
-                .stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation failed");
+    public ResponseEntity<Map<String, Object>> handleBadRequest(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors()
+                .forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
+
+        Map<String, Object> response = Map.of(
+                "status", "error",
+                "message", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", error));
+                .body(response);
     }
 
 }
