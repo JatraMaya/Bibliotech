@@ -20,7 +20,7 @@ public class UserRegisterDto {
     @NotBlank(message = "First name is required.")
     private String firstname;
 
-    @Size(min = 3, max = 10, message = "Last name must be at least three characters long.")
+    @Size(min = 0, max = 10, message = "Maximum character for lastname cannot be more then 10 characters long.")
     private String lastname;
 
     @Size(min = 5, max = 100, message = "Email must be at least 5 characters long.")
