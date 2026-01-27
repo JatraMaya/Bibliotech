@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jatramaya.bibliotech.dto.RegisterResponseDto;
+import com.jatramaya.bibliotech.dto.UserLoginDTO;
 import com.jatramaya.bibliotech.dto.UserRegisterDto;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
@@ -53,6 +54,13 @@ public class AuthController {
                 "message", "user created successfully",
                 "user", result);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginDTO dto) {
+        String token = authService.login(dto.getUsername(), dto.getPassword());
+        Map<String, String> response = Map.of("Status", "Succes", "Message", "Login success", "Token", token);
         return ResponseEntity.ok(response);
     }
 
