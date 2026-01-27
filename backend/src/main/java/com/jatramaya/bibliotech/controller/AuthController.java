@@ -39,10 +39,10 @@ public class AuthController {
 
         String fullname;
 
-        if (!saved.getLastname().isEmpty()) {
-            fullname = saved.getFirstname() + " " + saved.getLastname();
-        } else {
+        if (saved.getLastname() == null) {
             fullname = saved.getFirstname();
+        } else {
+            fullname = saved.getFirstname() + " " + saved.getLastname();
         }
         RegisterResponseDto result = new RegisterResponseDto();
         result.setUsername(saved.getUsername());
