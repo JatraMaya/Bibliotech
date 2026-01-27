@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDto {
+public class UserRegisterDTO {
 
     @StrongCredential
     @Size(min = 3, max = 10)
