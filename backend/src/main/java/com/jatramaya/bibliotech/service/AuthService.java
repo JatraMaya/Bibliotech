@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.exception.DuplicateCredentialException;
+import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.exception.InvalidPasswordException;
 import com.jatramaya.bibliotech.repository.UserRepository;
 import com.jatramaya.bibliotech.utils.JWT;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AuthService {
@@ -41,13 +40,28 @@ public class AuthService {
 
     public String login(String username, String password) {
         UserEntity user = repo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Username not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new InvalidPasswordException("Unauthorized password");
         }
 
         return jwt.generateToken(user.getUsername(), user.getRole().name());
+    }
+
+    public void changePassword(String username, String oldPassword, String newPassword) {
+
+        UserEntity user = repo.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new InvalidPasswordException("Current password not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        repo.save(user);
+
     }
 
 }
