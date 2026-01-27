@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jatramaya.bibliotech.dto.UserRegisterDTO;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.exception.DuplicateCredentialException;
 import com.jatramaya.bibliotech.exception.EntityNotFoundException;
@@ -25,7 +26,14 @@ public class AuthService {
     @Autowired
     private JWT jwt;
 
-    public UserEntity register(UserEntity user) {
+    public UserEntity register(UserRegisterDTO dto) {
+        UserEntity user = new UserEntity();
+
+        user.setUsername(dto.getUsername().toLowerCase());
+        user.setFirstname(dto.getFirstname().toLowerCase());
+        user.setLastname(dto.getLastname().toLowerCase());
+        user.setPassword(dto.getPassword());
+        user.setEmail(dto.getEmail().toLowerCase());
 
         if (repo.existsByUsername(user.getUsername())) {
             throw new DuplicateCredentialException("Username or email already exist");
