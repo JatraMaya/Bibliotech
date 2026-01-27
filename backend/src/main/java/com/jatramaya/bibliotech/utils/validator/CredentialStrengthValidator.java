@@ -3,7 +3,7 @@ package com.jatramaya.bibliotech.utils.validator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class UsernameStrengthValidator implements ConstraintValidator<StrongUsername, String> {
+public class CredentialStrengthValidator implements ConstraintValidator<StrongCredential, String> {
     
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
