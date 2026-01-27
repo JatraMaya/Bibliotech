@@ -3,6 +3,7 @@ package com.jatramaya.bibliotech.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,14 +24,26 @@ public class GlobalExceptionHandler {
 
         @ExceptionHandler(InvalidPasswordException.class)
         public ResponseEntity<Map<String, String>> handleBadPassword(InvalidPasswordException ex) {
-                Map<String, String> response = Map.of("status", "error", "message", ex.getMessage());
+                Map<String, String> response = Map.of(
+                                "status", "error",
+                                "message", ex.getMessage());
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
+        @ExceptionHandler(DataIntegrityViolationException.class)
+        public ResponseEntity<Map<String, String>> handleIntegrityError(DataIntegrityViolationException ex) {
+                Map<String, String> response = Map.of(
+                                "status", "error",
+                                "message", "user profile already exist");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
         @ExceptionHandler(EntityNotFoundException.class)
         public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
-                Map<String, String> response = Map.of("status", "error", "message", ex.getMessage());
+                Map<String, String> response = Map.of(
+                                "status", "error",
+                                "message", ex.getMessage());
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
@@ -41,6 +54,9 @@ public class GlobalExceptionHandler {
 
                 ex.getBindingResult().getFieldErrors()
                                 .forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
+
+                ex.getBindingResult().getGlobalErrors()
+                                .forEach(err -> errors.put(err.getObjectName(), err.getDefaultMessage()));
 
                 Map<String, Object> response = Map.of(
                                 "status", "error",
