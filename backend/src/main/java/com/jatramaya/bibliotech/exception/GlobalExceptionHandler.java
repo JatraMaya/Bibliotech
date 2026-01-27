@@ -28,6 +28,13 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
+        @ExceptionHandler(EntityNotFoundException.class)
+        public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
+                Map<String, String> response = Map.of("status", "error", "message", ex.getMessage());
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<Map<String, Object>> handleBadRequest(MethodArgumentNotValidException ex) {
                 Map<String, String> errors = new HashMap<>();
