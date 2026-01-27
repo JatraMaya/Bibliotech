@@ -3,9 +3,10 @@ package com.jatramaya.bibliotech.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jatramaya.bibliotech.dto.RegisterResponseDto;
+import com.jatramaya.bibliotech.dto.ChangePasswordDTO;
+import com.jatramaya.bibliotech.dto.RegisterResponseDTO;
 import com.jatramaya.bibliotech.dto.UserLoginDTO;
-import com.jatramaya.bibliotech.dto.UserRegisterDto;
+import com.jatramaya.bibliotech.dto.UserRegisterDTO;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
 
@@ -26,7 +27,7 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDto dto) {
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDTO dto) {
         UserEntity user = new UserEntity();
 
         user.setUsername(dto.getUsername());
@@ -44,7 +45,7 @@ public class AuthController {
         } else {
             fullname = saved.getFirstname() + " " + saved.getLastname();
         }
-        RegisterResponseDto result = new RegisterResponseDto();
+        RegisterResponseDTO result = new RegisterResponseDTO();
         result.setUsername(saved.getUsername());
         result.setEmail(saved.getEmail());
         result.setFullname(fullname);
@@ -61,6 +62,16 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginDTO dto) {
         String token = authService.login(dto.getUsername(), dto.getPassword());
         Map<String, String> response = Map.of("Status", "Succes", "Message", "Login success", "Token", token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordDTO dto) {
+
+        authService.changePassword(dto.getUsername(), dto.getCurrentPassword(), dto.getNewPassword());
+
+        Map<String, String> response = Map.of("status", "Success", "message", "Password updated succesfully");
+
         return ResponseEntity.ok(response);
     }
 
