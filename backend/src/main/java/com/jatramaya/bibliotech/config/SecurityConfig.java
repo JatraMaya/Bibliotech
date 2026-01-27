@@ -15,11 +15,19 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.jatramaya.bibliotech.entity.user.Role;
+import com.jatramaya.bibliotech.exception.CustomAccessDeniedHandler;
+import com.jatramaya.bibliotech.exception.CustomAuthenticationEntryPoint;
 import com.jatramaya.bibliotech.filter.JWTFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+        @Autowired
+        private CustomAccessDeniedHandler accessDeniedHandler;
+
+        @Autowired
+        private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
         @Autowired
         private JWTFilter jwtFilter;
@@ -39,6 +47,9 @@ public class SecurityConfig {
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(ex -> ex
+                                                .accessDeniedHandler(accessDeniedHandler)
+                                                .authenticationEntryPoint(authenticationEntryPoint))
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
                 return http.build();
 
