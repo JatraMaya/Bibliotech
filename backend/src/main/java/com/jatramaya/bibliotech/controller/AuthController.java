@@ -28,27 +28,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDTO dto) {
-        UserEntity user = new UserEntity();
 
-        user.setUsername(dto.getUsername().toLowerCase());
-        user.setFirstname(dto.getFirstname().toLowerCase());
-        user.setLastname(dto.getLastname().toLowerCase());
-        user.setPassword(dto.getPassword());
-        user.setEmail(dto.getEmail().toLowerCase());
-
-        UserEntity saved = authService.register(user);
-
-        String fullname;
-
-        if (saved.getLastname() == null) {
-            fullname = saved.getFirstname();
-        } else {
-            fullname = saved.getFirstname() + " " + saved.getLastname();
-        }
-        RegisterResponseDTO result = new RegisterResponseDTO();
-        result.setUsername(saved.getUsername());
-        result.setEmail(saved.getEmail());
-        result.setFullname(fullname);
+        UserEntity user = authService.register(dto);
+        RegisterResponseDTO result = new RegisterResponseDTO(user);
 
         Map<String, Object> response = Map.of(
                 "status", "success",
