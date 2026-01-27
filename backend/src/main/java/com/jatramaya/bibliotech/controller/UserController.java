@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jatramaya.bibliotech.dto.AddProfileDTO;
 import com.jatramaya.bibliotech.dto.CurrentUserResponseDTO;
+import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
+import com.jatramaya.bibliotech.service.ProfileService;
 import com.jatramaya.bibliotech.service.UserService;
 
 import jakarta.validation.Valid;
@@ -24,25 +26,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserController {
 
     @Autowired
-    private UserService service;
+    private ProfileService profileService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private AuthService auth;
 
+    private UserEntity getUser() {
+        String username = auth.getCurrentUsername();
+        return userService.getCurrentUser(username);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<CurrentUserResponseDTO> getCurrentUser() {
-        String username = auth.getCurrentUsername();
-        UserEntity user = service.getCurrentUser(username);
 
-        CurrentUserResponseDTO response = new CurrentUserResponseDTO(user);
+        CurrentUserResponseDTO response = new CurrentUserResponseDTO(getUser());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<Map<String,String>> addProfile(@Valid @RequestBody
-    AddProfileDTO dto ) {
+    public ResponseEntity<Map<String, String>> addProfile(@Valid @RequestBody AddProfileDTO dto) {
 
-    Aut
+        UserEntity user = getUser();
+        ProfileEntity profile = profileService.createProfile(user, dto);
+        Map<String, String> result;
+
+        if (profile == null) {
+            result = Map.of(
+                    "status", "Success",
+                    "message", "No profile updated");
+        } else {
+            result = Map.of(
+                    "status", "Success",
+                    "message", "Profile Created");
+        }
+
+        return ResponseEntity.ok(result);
     }
 
 }
