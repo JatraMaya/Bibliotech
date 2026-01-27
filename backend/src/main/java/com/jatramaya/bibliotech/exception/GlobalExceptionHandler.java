@@ -3,6 +3,9 @@ package com.jatramaya.bibliotech.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
