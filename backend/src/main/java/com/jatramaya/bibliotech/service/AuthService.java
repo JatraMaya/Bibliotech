@@ -6,6 +6,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jatramaya.bibliotech.dto.ChangePasswordDTO;
+import com.jatramaya.bibliotech.dto.UserLoginDTO;
 import com.jatramaya.bibliotech.dto.UserRegisterDTO;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.exception.DuplicateCredentialException;
@@ -26,8 +28,12 @@ public class AuthService {
     @Autowired
     private JWT jwt;
 
+    private String notFoundError = "User not found";
+
     public UserEntity register(UserRegisterDTO dto) {
         UserEntity user = new UserEntity();
+
+        String errorResponse = "Username or email already exist";
 
         user.setUsername(dto.getUsername().toLowerCase());
         user.setFirstname(dto.getFirstname().toLowerCase());
@@ -36,10 +42,10 @@ public class AuthService {
         user.setEmail(dto.getEmail().toLowerCase());
 
         if (repo.existsByUsername(user.getUsername())) {
-            throw new DuplicateCredentialException("Username or email already exist");
+            throw new DuplicateCredentialException(errorResponse);
         }
         if (repo.existsByEmail(user.getEmail())) {
-            throw new DuplicateCredentialException("Username or email already exist");
+            throw new DuplicateCredentialException(errorResponse);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -48,27 +54,27 @@ public class AuthService {
 
     }
 
-    public String login(String username, String password) {
-        UserEntity user = repo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public String login(UserLoginDTO dto) {
+        UserEntity user = repo.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException(notFoundError));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidPasswordException("Unauthorized password");
         }
 
         return jwt.generateToken(user.getUsername(), user.getRole().name());
     }
 
-    public void changePassword(String username, String oldPassword, String newPassword) {
+    public void changePassword(ChangePasswordDTO dto) {
 
-        UserEntity user = repo.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserEntity user = repo.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException(notFoundError));
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             throw new InvalidPasswordException("Current password not match");
         }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
 
         repo.save(user);
 

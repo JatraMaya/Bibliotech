@@ -42,17 +42,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginDTO dto) {
-        String token = authService.login(dto.getUsername(), dto.getPassword());
-        Map<String, String> response = Map.of("Status", "Succes", "Message", "Login success", "Token", token);
+        String token = authService.login(dto);
+        Map<String, String> response = Map.of(
+                "Status", "Succes",
+                "Message", "Login success",
+                "Token", token);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/password")
     public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordDTO dto) {
-
-        authService.changePassword(dto.getUsername(), dto.getCurrentPassword(), dto.getNewPassword());
-
-        Map<String, String> response = Map.of("status", "Success", "message", "Password updated succesfully");
+        authService.changePassword(dto);
+        Map<String, String> response = Map.of(
+                "status", "Success",
+                "message", "Password updated succesfully");
 
         return ResponseEntity.ok(response);
     }
