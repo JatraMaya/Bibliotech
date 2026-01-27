@@ -15,15 +15,15 @@ public class GlobalExceptionHandler {
         @ExceptionHandler(DuplicateCredentialException.class)
         public ResponseEntity<Map<String, String>> handleDuplicateCredential(DuplicateCredentialException ex) {
                 Map<String, String> response = Map.of(
-                                "Status", "Error",
-                                "Message", ex.getMessage());
+                                "status", "error",
+                                "message", ex.getMessage());
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                                 .body(response);
         }
 
         @ExceptionHandler(InvalidPasswordException.class)
         public ResponseEntity<Map<String, String>> handleBadPassword(InvalidPasswordException ex) {
-                Map<String, String> response = Map.of("Status", "Error", "Message", ex.getMessage());
+                Map<String, String> response = Map.of("status", "error", "message", ex.getMessage());
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
