@@ -30,11 +30,11 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDTO dto) {
         UserEntity user = new UserEntity();
 
-        user.setUsername(dto.getUsername());
-        user.setFirstname(dto.getFirstname());
-        user.setLastname(dto.getLastname());
+        user.setUsername(dto.getUsername().toLowerCase());
+        user.setFirstname(dto.getFirstname().toLowerCase());
+        user.setLastname(dto.getLastname().toLowerCase());
         user.setPassword(dto.getPassword());
-        user.setEmail(dto.getEmail());
+        user.setEmail(dto.getEmail().toLowerCase());
 
         UserEntity saved = authService.register(user);
 
