@@ -16,6 +16,7 @@ import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.exception.InvalidPasswordException;
 import com.jatramaya.bibliotech.repository.UserRepository;
 import com.jatramaya.bibliotech.utils.JWT;
+import static com.jatramaya.bibliotech.utils.Utility.hasValue;
 
 @Service
 public class AuthService {
@@ -39,7 +40,9 @@ public class AuthService {
 
         user.setUsername(dto.getUsername().toLowerCase());
         user.setFirstname(dto.getFirstname().toLowerCase());
-        user.setLastname(dto.getLastname().toLowerCase());
+        if (hasValue(dto.getLastname())) {
+            user.setLastname(dto.getLastname().toLowerCase());
+        }
         user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail().toLowerCase());
 
