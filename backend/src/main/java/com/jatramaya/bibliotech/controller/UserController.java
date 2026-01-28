@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jatramaya.bibliotech.dto.AddProfileDTO;
 import com.jatramaya.bibliotech.dto.CurrentUserResponseDTO;
+import com.jatramaya.bibliotech.dto.UpdateUserDTO;
 import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/user")
@@ -64,6 +66,24 @@ public class UserController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<Map<String, String>> updateUser(@Valid @RequestBody UpdateUserDTO dto) {
+
+        UserEntity user = getUser();
+        boolean dataUpdated = userService.updateUserProfile(user, dto);
+
+        Map<String, String> result;
+
+        if (dataUpdated) {
+            result = Map.of("status", "Success", "message", "Profile Updated");
+        } else {
+            result = Map.of("status", "Success", "message", "Profile not updated");
+        }
+
+        return ResponseEntity.ok(result);
+
     }
 
 }
