@@ -9,16 +9,15 @@ import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.repository.UserRepository;
+import static com.jatramaya.bibliotech.utils.Utility.hasValue;
+
+import java.util.UUID;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository repo;
-
-    private boolean hasValue(String value) {
-        return value != null && !value.isBlank();
-    }
 
     public UserEntity getCurrentUser(String username) {
 
@@ -80,6 +79,17 @@ public class UserService {
     public boolean deleteUserData(String username) {
 
         UserEntity user = getCurrentUser(username);
+
+        repo.delete(user);
+
+        return true;
+
+    }
+
+    @Transactional
+    public boolean deleteUserDataById(UUID id) {
+
+        UserEntity user = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         repo.delete(user);
 
