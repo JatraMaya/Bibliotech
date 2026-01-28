@@ -18,7 +18,7 @@ public class RegisterResponseDTO {
         setUsername(user.getUsername());
         setEmail(user.getEmail());
 
-        if (user.getLastname() != null) {
+        if (user.getLastname() != null && !user.getLastname().isBlank()) {
             setFullname(user.getFirstname() + " " + user.getLastname());
         } else {
             setFullname(user.getFirstname());
