@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jatramaya.bibliotech.dto.ChangePasswordDTO;
 import com.jatramaya.bibliotech.dto.UserLoginDTO;
@@ -30,6 +31,7 @@ public class AuthService {
 
     private String notFoundError = "User not found";
 
+    @Transactional
     public UserEntity register(UserRegisterDTO dto) {
         UserEntity user = new UserEntity();
 
@@ -65,6 +67,7 @@ public class AuthService {
         return jwt.generateToken(user.getUsername(), user.getRole().name());
     }
 
+    @Transactional
     public void changePassword(ChangePasswordDTO dto) {
 
         UserEntity user = repo.findByUsername(dto.getUsername())
