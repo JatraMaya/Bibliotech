@@ -76,4 +76,15 @@ public class UserService {
 
     }
 
+    @Transactional
+    public boolean deleteUserData(String username) {
+
+        UserEntity user = getCurrentUser(username);
+
+        repo.delete(user);
+
+        return true;
+
+    }
+
 }
