@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -43,9 +44,18 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
                 Map<String, String> response = Map.of(
                                 "status", "error",
-                                "message", ex.getMessage());
+                                "message", ex.getLocalizedMessage());
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<Map<String, Object>> handleBadRequestBody(HttpMessageNotReadableException ex) {
+
+                Map<String, Object> response = Map.of(
+                                "status", "error",
+                                "message", ex.getCause());
+                return ResponseEntity.status(400).body(response);
         }
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
