@@ -44,9 +44,9 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UserLoginDTO dto) {
         String token = authService.login(dto);
         Map<String, String> response = Map.of(
-                "Status", "Succes",
-                "Message", "Login success",
-                "Token", token);
+                "status", "Succes",
+                "message", "Login success",
+                "token", token);
         return ResponseEntity.ok(response);
     }
 
