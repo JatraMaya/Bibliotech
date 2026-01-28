@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Map<String, String>> handleIntegrityError(DataIntegrityViolationException ex) {
                 Map<String, String> response = Map.of(
                                 "status", "error",
-                                "message", "user profile already exist");
+                                "message", ex.getMessage());
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Map<String, String>> handleEntityNotFound(EntityNotFoundException ex) {
                 Map<String, String> response = Map.of(
                                 "status", "error",
-                                "message", ex.getLocalizedMessage());
+                                "message", ex.getMessage());
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
