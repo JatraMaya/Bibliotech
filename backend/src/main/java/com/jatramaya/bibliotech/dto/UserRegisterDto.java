@@ -27,7 +27,7 @@ public class UserRegisterDTO {
     private String lastname;
 
     @Size(min = 5, max = 100)
-    @Email(message = "Email must be a valid.")
+    @Email(regexp = ".+@.+\\..+", message = "Email must be a valid.")
     @NotBlank(message = "Email is required.")
     private String email;
 
