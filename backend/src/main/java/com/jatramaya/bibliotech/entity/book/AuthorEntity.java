@@ -32,5 +32,5 @@ public class AuthorEntity {
     @ManyToMany(mappedBy = "authors")
     private Set<BookEntity> books = new HashSet<>();
 
-    private String authorPictureUrl;
+    private String authorPicturUrl;
 }
