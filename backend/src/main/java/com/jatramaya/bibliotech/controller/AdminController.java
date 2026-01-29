@@ -75,6 +75,26 @@ public class AdminController {
 
     }
 
+    @PutMapping("/author/img/{id}")
+    public ResponseEntity<?> addAuthorPicture(
+            @PathVariable Long id, @RequestParam(required = true) MultipartFile image) throws IOException {
+
+        AuthorEntity author = authorService.updateImg(id, image);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Add profile image for author " + author.getName()));
+    }
+
+    @DeleteMapping("/author/img/{id}")
+    public ResponseEntity<?> deleteAuthorImage(@PathVariable Long id) throws IOException {
+        AuthorEntity author = authorService.deleteImg(id);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Success deleting img profile for author " + author.getName()));
+    }
+
     /// Role Realted endpoint
 
     @PostMapping("/create-admin")
