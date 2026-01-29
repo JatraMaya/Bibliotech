@@ -1,27 +1,28 @@
 package com.jatramaya.bibliotech.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.jatramaya.bibliotech.dto.AddProfileDTO;
 import com.jatramaya.bibliotech.dto.CurrentUserResponseDTO;
 import com.jatramaya.bibliotech.dto.UpdateUserDTO;
 import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
-import com.jatramaya.bibliotech.service.ProfileService;
 import com.jatramaya.bibliotech.service.UserService;
 
 import jakarta.validation.Valid;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -29,17 +30,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class UserController {
 
     @Autowired
-    private ProfileService profileService;
-
-    @Autowired
-    private UserService userService;
+    private UserService service;
 
     @Autowired
     private AuthService auth;
 
     private UserEntity getUser() {
         String username = auth.getCurrentUsername();
-        return userService.getCurrentUser(username);
+        return service.getCurrentUser(username);
     }
 
     @GetMapping("/me")
@@ -50,10 +48,12 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<Map<String, String>> addProfile(@Valid @RequestBody AddProfileDTO dto) {
+    public ResponseEntity<Map<String, String>> addProfile(
+            @RequestParam(required = false) String bio,
+            @RequestParam(required = false) MultipartFile avatar) throws IOException {
 
         UserEntity user = getUser();
-        ProfileEntity profile = profileService.createProfile(user, dto);
+        ProfileEntity profile = service.createProfile(user, bio, avatar);
         Map<String, String> result;
 
         if (profile == null) {
@@ -70,10 +70,12 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, String>> updateUser(@Valid @RequestBody UpdateUserDTO dto) {
+    public ResponseEntity<Map<String, String>> updateUser(
+            @Valid @ModelAttribute UpdateUserDTO dto,
+            @RequestParam(required = false) MultipartFile avatar) throws IOException {
 
         UserEntity user = getUser();
-        boolean dataUpdated = userService.updateUserProfile(user, dto);
+        boolean dataUpdated = service.updateUserProfile(user, dto, avatar);
 
         Map<String, String> result;
 
@@ -91,7 +93,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> deleteCurrentUser() {
         UserEntity user = getUser();
 
-        userService.deleteUserData(user.getUsername());
+        service.deleteUserData(user.getUsername());
 
         return ResponseEntity.ok(Map.of(
                 "status", "Success",
