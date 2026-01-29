@@ -13,8 +13,16 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.jatramaya.bibliotech.entity.user.ProfileEntity;
+import com.jatramaya.bibliotech.entity.user.Role;
+import com.jatramaya.bibliotech.entity.user.UserEntity;
+import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -60,12 +68,49 @@ public class ImageService {
         return "/uploads/avatars/" + newFileName;
     }
 
+    public Resource getAvatar(String filename, UserEntity currentUser) throws IOException {
+
+        if (currentUser.getRole() != Role.ADMIN) {
+            ProfileEntity profile = currentUser.getProfile();
+
+            if (profile == null || profile.getAvatarUrl() == null || !profile.getAvatarUrl().endsWith(filename)) {
+                throw new AccessDeniedException("You don't have permission to access this file");
+            }
+
+        }
+
+        Path filePath = Paths.get(uploadDirectory, filename);
+
+        if (!Files.exists(filePath)) {
+            throw new EntityNotFoundException("File not found");
+        }
+
+        return new UrlResource(filePath.toUri());
+
+    }
+
+    public Resource getImage(String filename) throws IOException {
+        Path filePath = Paths.get(uploadDirectory, filename);
+
+        if (!Files.exists(filePath)) {
+            throw new EntityNotFoundException("File not found");
+        }
+
+        return new UrlResource(filePath.toUri());
+    }
+
     public void deleteAvatar(String avatarUrl) throws IOException {
         if (avatarUrl != null && avatarUrl.startsWith("/uploads/avatars/")) {
             String filename = avatarUrl.substring(avatarUrl.lastIndexOf("/") + 1);
             Path filePath = Paths.get(uploadDirectory, filename);
             Files.deleteIfExists(filePath);
         }
+    }
+
+    public String getContentType(String filename) throws IOException {
+        Path filePath = Paths.get(uploadDirectory, filename);
+        String contentType = Files.probeContentType(filePath);
+        return contentType != null ? contentType : "application/octet-stream";
     }
 
 }
