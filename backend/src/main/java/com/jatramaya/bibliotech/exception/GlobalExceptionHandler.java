@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import io.jsonwebtoken.io.IOException;
+
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
@@ -55,7 +58,21 @@ public class GlobalExceptionHandler {
                 Map<String, Object> response = Map.of(
                                 "status", "error",
                                 "message", ex.getCause());
-                return ResponseEntity.status(400).body(response);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        @ExceptionHandler(IOException.class)
+        public ResponseEntity<?> handleIOException(IOException ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                                "status", "error",
+                                "message", "Unhandled IO Exception Error"));
+        }
+
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ResponseEntity<?> handleIllegalArgsException(IllegalArgumentException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                                "status", "error",
+                                "message", ex.getMessage()));
         }
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
