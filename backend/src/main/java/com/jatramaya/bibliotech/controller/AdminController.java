@@ -64,6 +64,24 @@ public class AdminController {
                 "author", author));
     }
 
+    @PutMapping("/author/{id}")
+    public ResponseEntity<?> updateAuthor(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) MultipartFile img,
+            @PathVariable Long id) throws IOException {
+        boolean updated = authorService.updateAuthor(id, name, img);
+
+        if (updated) {
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Successfully update author data"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "author data not updated"));
+    }
+
     @DeleteMapping("/author/{id}")
     public ResponseEntity<Map<String, String>> deleteAuthor(@PathVariable Long id) throws IOException {
 
