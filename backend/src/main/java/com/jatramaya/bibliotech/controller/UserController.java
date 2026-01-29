@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @DeleteMapping("/profile")
-    public ResponseEntity<Map<String, String>> deleteCurrentUser() {
+    public ResponseEntity<Map<String, String>> deleteCurrentUser() throws IOException {
         UserEntity user = getUser();
 
         service.deleteUserData(user.getUsername());
