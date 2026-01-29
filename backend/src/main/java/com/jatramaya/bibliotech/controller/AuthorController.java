@@ -56,7 +56,7 @@ public class AuthorController {
     public ResponseEntity<?> getAuthorbyId(@PathVariable Long id) {
 
         AuthorEntity author = service.getAuthorById(id);
-        AddAuthorResponseDTO response = new AddAuthorResponseDTO(author.getName(), author.getAuthorPicturUrl());
+        AddAuthorResponseDTO response = new AddAuthorResponseDTO(author);
         System.out.println("INI ID " + id);
 
         return ResponseEntity.ok(Map.of(
