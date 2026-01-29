@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -104,15 +103,15 @@ public class UserController {
 
         return ResponseEntity.ok(Map.of(
                 "status", "Success",
-                "message", "User and profile deleted"));
+                "message", "Account Deleted"));
 
     }
 
-    @GetMapping("/profile/avatar/{filename}")
-    public ResponseEntity<Resource> getAvatar(@PathVariable String filename) throws IOException {
+    @GetMapping("/profile/avatar")
+    public ResponseEntity<Resource> getAvatar() throws IOException {
         UserEntity user = getUser();
-        Resource resource = imageService.getAvatar(filename, user);
-        String contentType = imageService.getContentType(filename);
+        Resource resource = imageService.getAvatar(user);
+        String contentType = imageService.getContentType(user.getProfile().getAvatarUrl());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))

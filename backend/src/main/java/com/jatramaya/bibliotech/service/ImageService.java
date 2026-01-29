@@ -15,12 +15,10 @@ import java.awt.image.BufferedImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.entity.user.ProfileEntity;
-import com.jatramaya.bibliotech.entity.user.Role;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 
@@ -68,17 +66,15 @@ public class ImageService {
         return "/uploads/avatars/" + newFileName;
     }
 
-    public Resource getAvatar(String filename, UserEntity currentUser) throws IOException {
+    public Resource getAvatar(UserEntity currentUser) throws IOException {
 
-        if (currentUser.getRole() != Role.ADMIN) {
-            ProfileEntity profile = currentUser.getProfile();
+        ProfileEntity profile = currentUser.getProfile();
 
-            if (profile == null || profile.getAvatarUrl() == null || !profile.getAvatarUrl().endsWith(filename)) {
-                throw new AccessDeniedException("You don't have permission to access this file");
-            }
-
+        if (profile == null || profile.getAvatarUrl() == null) {
+            throw new EntityNotFoundException("No Avatar img found");
         }
 
+        String filename = profile.getAvatarUrl().substring(profile.getAvatarUrl().lastIndexOf("/") + 1);
         Path filePath = Paths.get(uploadDirectory, filename);
 
         if (!Files.exists(filePath)) {
