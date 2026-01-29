@@ -27,7 +27,7 @@ public class UserService {
     private ProfileRepository profileRepo;
 
     @Autowired
-    private FileUploadService uploadService;
+    private ImageService uploadService;
 
     public UserEntity getCurrentUser(String username) {
 
@@ -62,7 +62,7 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateUserProfile(UserEntity user, UpdateUserDTO dto) {
+    public boolean updateUserProfile(UserEntity user, UpdateUserDTO dto, MultipartFile avatar) throws IOException {
 
         ProfileEntity profile = user.getProfile();
         System.out.println(dto.getEmail());
@@ -93,8 +93,12 @@ public class UserService {
             updated = true;
         }
 
-        if (hasValue(dto.getAvatarUrl())) {
-            profile.setAvatarUrl(dto.getAvatarUrl());
+        if (avatar != null && !avatar.isEmpty()) {
+            if (profile.getAvatarUrl() != null) {
+                uploadService.deleteAvatar(profile.getAvatarUrl());
+            }
+            String avatarUrl = uploadService.uploadAvatar(avatar);
+            profile.setAvatarUrl(avatarUrl);
             updated = true;
         }
 
