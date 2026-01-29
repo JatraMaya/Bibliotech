@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.AddAuthorDTO;
+import com.jatramaya.bibliotech.dto.AddAuthorResponseDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.service.AuthorService;
 import com.jatramaya.bibliotech.service.ImageService;
@@ -33,6 +34,19 @@ public class AuthorController {
 
     @Autowired
     private ImageService imageService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAuthorbyId(@PathVariable Long id) {
+
+        AuthorEntity author = service.getAuthorById(id);
+        AddAuthorResponseDTO response = new AddAuthorResponseDTO(author.getName(), author.getAuthorPicturUrl());
+        System.out.println("INI ID " + id);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Succesfully get author data",
+                "author", response));
+    }
 
     @GetMapping("/img/{filename}")
     public ResponseEntity<Resource> getAuthorImage(@PathVariable String filename) throws IOException {
