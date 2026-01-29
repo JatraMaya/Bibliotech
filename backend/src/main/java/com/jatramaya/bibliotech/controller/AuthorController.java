@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,20 @@ public class AuthorController {
 
     @Autowired
     private ImageService imageService;
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<AddAuthorResponseDTO> pageData = service.getAll(page, size);
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "data", pageData.getContent(),
+                "currentPage", pageData.getNumber(),
+                "totalItems", pageData.getTotalElements(),
+                "totalPages", pageData.getTotalPages()));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAuthorbyId(@PathVariable Long id) {

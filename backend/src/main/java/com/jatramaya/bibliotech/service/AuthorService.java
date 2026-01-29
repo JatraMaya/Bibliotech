@@ -2,14 +2,19 @@ package com.jatramaya.bibliotech.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.AddAuthorDTO;
+import com.jatramaya.bibliotech.dto.AddAuthorResponseDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.repository.AuthorRepo;
+
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 
@@ -47,6 +52,12 @@ public class AuthorService {
         AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
 
         return author;
+    }
+
+    public Page<AddAuthorResponseDTO> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AuthorEntity> entities = repo.findAll(pageable);
+        return entities.map(AddAuthorResponseDTO::new);
     }
 
     @Transactional
