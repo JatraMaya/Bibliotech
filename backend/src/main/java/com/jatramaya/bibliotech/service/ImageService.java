@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import net.coobird.thumbnailator.Thumbnails;
 
 @Service
-public class FileUploadService {
+public class ImageService {
 
     @Autowired
     private String uploadDirectory;
