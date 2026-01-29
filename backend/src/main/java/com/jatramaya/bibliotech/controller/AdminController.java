@@ -1,13 +1,18 @@
 package com.jatramaya.bibliotech.controller;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.jatramaya.bibliotech.dto.AddAuthorDTO;
 import com.jatramaya.bibliotech.dto.RegisterResponseDTO;
 import com.jatramaya.bibliotech.dto.UserRegisterDTO;
+import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AdminService;
 import com.jatramaya.bibliotech.service.AuthService;
@@ -19,6 +24,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,8 +49,23 @@ public class AdminController {
         this.userService = userService;
     }
 
+    /// Author Related endpoint
+
+    @PostMapping("/author")
+    public ResponseEntity<?> createNewAuthor(
+            @Valid @ModelAttribute AddAuthorDTO dto,
+            @RequestParam(required = false) MultipartFile profilePic) throws IOException {
+
+        AuthorEntity author = authorService.createAuthor(dto, profilePic);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Crated new Author" + author.getName(),
+                "author", author));
+    }
+
     @DeleteMapping("/author/{id}")
-    public ResponseEntity<Map<String, String>> deleteAuthor(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteAuthor(@PathVariable Long id) throws IOException {
 
         authorService.deleteAuthor(id);
 
@@ -53,6 +74,8 @@ public class AdminController {
                 "message", "Author data deleted"));
 
     }
+
+    /// Role Realted endpoint
 
     @PostMapping("/create-admin")
     public ResponseEntity<?> createNewAdmin(@Valid @RequestBody UserRegisterDTO dto) {
@@ -77,6 +100,8 @@ public class AdminController {
                 "user", response));
 
     }
+
+    /// User related endpoint
 
     @PutMapping("/user/{id}/assign")
     public ResponseEntity<?> assingAdminFromUser(@PathVariable UUID id) {
@@ -117,7 +142,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/user/{id}/delete")
-    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) throws IOException {
         userService.deleteUserDataById(id);
 
         return ResponseEntity.ok(Map.of(
