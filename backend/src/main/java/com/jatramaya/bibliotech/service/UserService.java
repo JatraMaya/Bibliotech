@@ -27,7 +27,7 @@ public class UserService {
     private ProfileRepository profileRepo;
 
     @Autowired
-    private ImageService uploadService;
+    private ImageService imageService;
 
     public UserEntity getCurrentUser(String username) {
 
@@ -51,7 +51,7 @@ public class UserService {
         ProfileEntity profile = new ProfileEntity();
         profile.setUser(user);
         if (hasAvatar) {
-            String avatarUrl = uploadService.uploadAvatar(avatar);
+            String avatarUrl = imageService.uploadAvatar(avatar);
             profile.setAvatarUrl(avatarUrl);
         }
 
@@ -95,9 +95,9 @@ public class UserService {
 
         if (avatar != null && !avatar.isEmpty()) {
             if (profile.getAvatarUrl() != null) {
-                uploadService.deleteAvatar(profile.getAvatarUrl());
+                imageService.deleteAvatar(profile.getAvatarUrl());
             }
-            String avatarUrl = uploadService.uploadAvatar(avatar);
+            String avatarUrl = imageService.uploadAvatar(avatar);
             profile.setAvatarUrl(avatarUrl);
             updated = true;
         }
@@ -116,10 +116,11 @@ public class UserService {
     }
 
     @Transactional
-    public boolean deleteUserData(String username) {
+    public boolean deleteUserData(String username) throws IOException {
 
         UserEntity user = getCurrentUser(username);
 
+        imageService.deleteAvatar(user.getProfile().getAvatarUrl());
         repo.delete(user);
 
         return true;
@@ -127,9 +128,11 @@ public class UserService {
     }
 
     @Transactional
-    public boolean deleteUserDataById(UUID id) {
+    public boolean deleteUserDataById(UUID id) throws IOException {
 
         UserEntity user = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        imageService.deleteAvatar(user.getProfile().getAvatarUrl());
 
         repo.delete(user);
 
