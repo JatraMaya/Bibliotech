@@ -39,9 +39,11 @@ public class AuthorController {
     @GetMapping("/all")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
 
-        Page<AddAuthorResponseDTO> pageData = service.getAll(page, size);
+        Page<AddAuthorResponseDTO> pageData = service.getAll(page, size, sortBy, direction);
         return ResponseEntity.ok(Map.of(
                 "status", "Success",
                 "data", pageData.getContent(),

@@ -15,6 +15,7 @@ import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.repository.AuthorRepo;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
 
@@ -54,8 +55,11 @@ public class AuthorService {
         return author;
     }
 
-    public Page<AddAuthorResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<AddAuthorResponseDTO> getAll(int page, int size, String sortBy, String direction) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         Page<AuthorEntity> entities = repo.findAll(pageable);
         return entities.map(AddAuthorResponseDTO::new);
     }
