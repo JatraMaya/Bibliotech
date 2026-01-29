@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.jatramaya.bibliotech.entity.user.Role;
 import com.jatramaya.bibliotech.exception.CustomAccessDeniedHandler;
 import com.jatramaya.bibliotech.exception.CustomAuthenticationEntryPoint;
+import com.jatramaya.bibliotech.exception.CustomLogoutHandler;
 import com.jatramaya.bibliotech.filter.JWTFilter;
 
 @Configuration
@@ -28,6 +29,9 @@ public class SecurityConfig {
 
         @Autowired
         private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+        @Autowired
+        private CustomLogoutHandler customLogoutHandler;
 
         @Autowired
         private JWTFilter jwtFilter;
@@ -46,6 +50,11 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                                 .anyRequest().authenticated())
+                                .logout(logout -> logout
+                                                .logoutUrl("/api/v1/auth/logout")
+                                                .logoutSuccessHandler(customLogoutHandler)
+                                                .invalidateHttpSession(true)
+                                                .deleteCookies("JSESSIONID"))
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .exceptionHandling(ex -> ex
