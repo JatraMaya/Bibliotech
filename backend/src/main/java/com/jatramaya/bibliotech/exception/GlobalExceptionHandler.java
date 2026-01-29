@@ -57,15 +57,15 @@ public class GlobalExceptionHandler {
 
                 Map<String, Object> response = Map.of(
                                 "status", "error",
-                                "message", ex.getCause());
+                                "message", ex.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         @ExceptionHandler(IOException.class)
         public ResponseEntity<?> handleIOException(IOException ex) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                                 "status", "error",
-                                "message", "Unhandled IO Exception Error"));
+                                "message", ex.getMessage()));
         }
 
         @ExceptionHandler(IllegalArgumentException.class)
