@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddAuthorResponseDTO {
 
+    private Long id;
     private String name;
     private String authorPictureUrl;
 
     public AddAuthorResponseDTO(AuthorEntity entity) {
         name = entity.getName();
         authorPictureUrl = entity.getAuthorPicturUrl();
+        id = entity.getId();
     }
 
 }
