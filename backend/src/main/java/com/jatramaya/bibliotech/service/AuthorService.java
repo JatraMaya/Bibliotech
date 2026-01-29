@@ -54,4 +54,32 @@ public class AuthorService {
         return true;
     }
 
+    @Transactional
+    public AuthorEntity updateImg(Long id, MultipartFile img) throws IOException {
+        AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
+
+        if (author.getAuthorPicturUrl() != null) {
+            imageService.deleteAvatar(author.getAuthorPicturUrl());
+        }
+
+        String profilePicUrl = imageService.uploadAvatar(img);
+
+        author.setAuthorPicturUrl(profilePicUrl);
+
+        return repo.save(author);
+    }
+
+    @Transactional
+    public AuthorEntity deleteImg(Long id) throws IOException {
+        AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
+
+        if (author.getAuthorPicturUrl() == null) {
+            throw new EntityNotFoundException("No image found for selected author");
+        }
+
+        imageService.deleteAvatar(author.getAuthorPicturUrl());
+        author.setAuthorPicturUrl(null);
+        return repo.save(author);
+    }
+
 }
