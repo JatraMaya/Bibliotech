@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.AddAuthorDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.exception.EntityNotFoundException;
 import com.jatramaya.bibliotech.repository.AuthorRepo;
 
-import static com.jatramaya.bibliotech.utils.Utility.hasValue;
+import java.io.IOException;
 
 @Service
 public class AuthorService {
@@ -18,8 +19,13 @@ public class AuthorService {
     @Autowired
     private AuthorRepo repo;
 
+    @Autowired
+    private ImageService imageService;
+
     @Transactional
-    public AuthorEntity createAuthor(AddAuthorDTO dto) {
+    public AuthorEntity createAuthor(AddAuthorDTO dto, MultipartFile file) throws IOException {
+
+        boolean hasProfilePicture = file != null && !file.isEmpty();
 
         if (repo.existsByName(dto.getName().toLowerCase())) {
             throw new DataIntegrityViolationException("Author already exist");
@@ -27,8 +33,9 @@ public class AuthorService {
 
         AuthorEntity author = new AuthorEntity();
 
-        if (hasValue(dto.getAuthorPictureUrl())) {
-            author.setAuthorPictureUrl(dto.getAuthorPictureUrl());
+        if (hasProfilePicture) {
+            String profilePicUrl = imageService.uploadAvatar(file);
+            author.setAuthorPicturUrl(profilePicUrl);
         }
 
         author.setName(dto.getName().toLowerCase());
@@ -37,10 +44,11 @@ public class AuthorService {
     }
 
     @Transactional
-    public boolean deleteAuthor(Long id) {
+    public boolean deleteAuthor(Long id) throws IOException {
 
         AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
 
+        imageService.deleteAvatar(author.getAuthorPicturUrl());
         repo.delete(author);
 
         return true;
