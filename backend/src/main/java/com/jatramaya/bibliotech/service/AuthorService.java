@@ -43,6 +43,38 @@ public class AuthorService {
         return repo.save(author);
     }
 
+    public AuthorEntity getAuthorById(Long id) {
+        AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
+
+        return author;
+    }
+
+    @Transactional
+    public boolean updateAuthor(Long id, String name, MultipartFile img) throws IOException {
+
+        boolean updated = false;
+
+        AuthorEntity author = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
+
+        if (name != null) {
+            author.setName(name);
+            updated = true;
+        }
+
+        if (img != null) {
+            imageService.deleteAvatar(author.getAuthorPicturUrl());
+            imageService.uploadAvatar(img);
+            updated = true;
+        }
+
+        if (updated) {
+            repo.save(author);
+        }
+
+        return updated;
+
+    }
+
     @Transactional
     public boolean deleteAuthor(Long id) throws IOException {
 
