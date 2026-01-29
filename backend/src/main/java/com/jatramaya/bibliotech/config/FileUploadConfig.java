@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FileUploadConfig {
 
-    @Value("${FILE_UPLOAD_DIR}")
+    @Value("${file.upload.dir}")
     private String uploadDir;
 
     @Bean
