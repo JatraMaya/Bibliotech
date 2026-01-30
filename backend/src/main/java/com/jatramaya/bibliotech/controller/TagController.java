@@ -2,9 +2,12 @@ package com.jatramaya.bibliotech.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jatramaya.bibliotech.dto.GenericWordDTO;
 import com.jatramaya.bibliotech.dto.TagDTO;
 import com.jatramaya.bibliotech.entity.book.TagEntity;
 import com.jatramaya.bibliotech.service.TagService;
+
+import jakarta.validation.Valid;
 
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/tag")
@@ -24,8 +28,11 @@ public class TagController {
     private TagService service;
 
     @PostMapping
-    public ResponseEntity<?> createTag(@RequestParam(required = true) String tagName) {
-        TagEntity tag = service.createNewTag(tagName);
+    public ResponseEntity<?> createTag(@Valid @RequestBody GenericWordDTO dto) {
+
+        String nameLowerCase = dto.getName().toLowerCase();
+
+        TagEntity tag = service.createNewTag(nameLowerCase);
 
         return ResponseEntity.ok(Map.of(
                 "status", "Success",
