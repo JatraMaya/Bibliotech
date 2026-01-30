@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.CreateBookDTO;
 import com.jatramaya.bibliotech.dto.CreateBookResponseDTO;
-import com.jatramaya.bibliotech.entity.book.BookEntity;
 import com.jatramaya.bibliotech.service.BookService;
 
 import jakarta.validation.Valid;
