@@ -1,5 +1,6 @@
 package com.jatramaya.bibliotech.dto;
 
+import com.jatramaya.bibliotech.entity.book.GenreEntity;
 import com.jatramaya.bibliotech.entity.book.TagEntity;
 
 import lombok.AllArgsConstructor;
@@ -17,6 +18,11 @@ public class TagDTO {
     public TagDTO(TagEntity tag) {
         name = tag.getName();
         id = tag.getId();
+    }
+
+    public TagDTO(GenreEntity genre) {
+        name = genre.getName();
+        id = genre.getId();
     }
 
 }
