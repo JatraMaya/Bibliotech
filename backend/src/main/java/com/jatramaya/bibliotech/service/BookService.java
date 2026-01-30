@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.CreateBookDTO;
 import com.jatramaya.bibliotech.dto.CreateBookResponseDTO;
+import com.jatramaya.bibliotech.dto.UpdateBookDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.entity.book.BookEntity;
 import com.jatramaya.bibliotech.entity.book.GenreEntity;
@@ -27,6 +28,8 @@ import com.jatramaya.bibliotech.repository.AuthorRepo;
 import com.jatramaya.bibliotech.repository.BookRepository;
 import com.jatramaya.bibliotech.repository.GenreRepository;
 import com.jatramaya.bibliotech.repository.TagRepository;
+
+import static com.jatramaya.bibliotech.utils.Utility.hasValue;
 
 @Service
 public class BookService {
@@ -132,6 +135,81 @@ public class BookService {
             book.getTags().size();
             return new CreateBookResponseDTO(book);
         });
+    }
+
+    @Transactional
+    public boolean updateBook(
+            Long id, UpdateBookDTO dto,
+            MultipartFile img) throws IOException {
+        boolean updated = false;
+
+        BookEntity book = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+
+        if (hasValue(dto.getTitle())) {
+            String newTitle = dto.getTitle().toLowerCase();
+            if (!book.getTitle().equals(newTitle)) {
+                for (Long authorId : book.getAuthors().stream().map(AuthorEntity::getId).toList()) {
+                    Optional<BookEntity> existing = repo.findByTitleAndAuthor(newTitle, authorId);
+                    if (existing.isPresent() && !existing.get().getId().equals(id)) {
+                        throw new DataIntegrityViolationException("Book title by the same author already exists");
+                    }
+                }
+                book.setTitle(newTitle);
+                updated = true;
+            }
+        }
+
+        if (hasValue(img)) {
+            String newCoverUrl = imgService.uploadAvatar(img);
+            if (book.getCoverUrl() != null) {
+                imgService.deleteAvatar(book.getCoverUrl());
+            }
+            book.setCoverUrl(newCoverUrl);
+            updated = true;
+        }
+
+        if (hasValue(dto.getAuthorsId())) {
+            Set<AuthorEntity> newAuthors = new HashSet<>();
+            for (Long authorId : dto.getAuthorsId()) {
+                AuthorEntity author = authorRepo.findById(authorId)
+                        .orElseThrow(() -> new EntityNotFoundException("Author not found"));
+                newAuthors.add(author);
+            }
+            book.setAuthors(newAuthors);
+            updated = true;
+        }
+        if (hasValue(dto.getGenresId())) {
+            Set<GenreEntity> newGenres = new HashSet<>();
+            for (Long genreId : dto.getGenresId()) {
+                GenreEntity genre = genreRepo.findById(genreId)
+                        .orElseThrow(() -> new EntityNotFoundException("Genre not found"));
+                newGenres.add(genre);
+            }
+            book.setGenres(newGenres);
+            updated = true;
+        }
+
+        if (hasValue(dto.getTagsId())) {
+            Set<TagEntity> newTags = new HashSet<>();
+            for (Long tagId : dto.getTagsId()) {
+                TagEntity tag = tagRepo.findById(tagId)
+                        .orElseThrow(() -> new EntityNotFoundException("Tag not found"));
+                newTags.add(tag);
+            }
+            book.setTags(newTags);
+            updated = true;
+        }
+
+        if (updated) {
+            book = repo.save(book);
+        }
+
+        book.getAuthors().size();
+        book.getGenres().size();
+        book.getTags().size();
+
+        return updated;
+
     }
 
     @Transactional
