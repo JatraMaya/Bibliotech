@@ -2,6 +2,7 @@ package com.jatramaya.bibliotech.service;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -112,8 +113,25 @@ public class BookService {
     public CreateBookResponseDTO getById(Long id) {
         BookEntity book = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
 
-        CreateBookResponseDTO response = new CreateBookResponseDTO(book);
-        return response;
+        return new CreateBookResponseDTO(book);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CreateBookResponseDTO> searchBooks(
+            List<Long> authorIds,
+            List<Long> genreIds,
+            List<Long> tagIds,
+            int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BookEntity> books = repo.searchBooks(authorIds, genreIds, tagIds, pageable);
+
+        return books.map(book -> {
+            book.getAuthors().size();
+            book.getGenres().size();
+            book.getTags().size();
+            return new CreateBookResponseDTO(book);
+        });
     }
 
 }
