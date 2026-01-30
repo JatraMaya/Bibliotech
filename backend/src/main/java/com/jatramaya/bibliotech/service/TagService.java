@@ -41,6 +41,10 @@ public class TagService {
         return entities.map(TagDTO::new);
     }
 
+    public TagEntity getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found"));
+    }
+
     public void deleteTag(Long id) {
         TagEntity tag = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found"));
 
