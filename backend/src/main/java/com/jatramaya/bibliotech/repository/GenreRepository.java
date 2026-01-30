@@ -8,4 +8,6 @@ import com.jatramaya.bibliotech.entity.book.GenreEntity;
 @Repository
 public interface GenreRepository extends JpaRepository<GenreEntity, Long> {
 
+    boolean existsByname(String name);
+
 }
