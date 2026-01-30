@@ -5,12 +5,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jatramaya.bibliotech.dto.AddBookCollectionDTO;
 import com.jatramaya.bibliotech.dto.CurrentUserResponseDTO;
 import com.jatramaya.bibliotech.dto.UpdateUserDTO;
 import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
 import com.jatramaya.bibliotech.service.ImageService;
+import com.jatramaya.bibliotech.service.UserBookService;
 import com.jatramaya.bibliotech.service.UserService;
 
 import jakarta.validation.Valid;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/user")
@@ -37,6 +40,9 @@ public class UserController {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private UserBookService userBookService;
 
     @Autowired
     private AuthService auth;
@@ -118,4 +124,16 @@ public class UserController {
                 .body(resource);
 
     }
+
+    @PostMapping("/book")
+    public ResponseEntity<?> addCollection(
+            @Valid @RequestBody AddBookCollectionDTO dto) {
+
+        userBookService.addBookCollection(dto, getUser().getId());
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Succefully add book to collection"));
+    }
+
 }
