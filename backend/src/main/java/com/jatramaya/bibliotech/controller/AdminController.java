@@ -17,6 +17,7 @@ import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AdminService;
 import com.jatramaya.bibliotech.service.AuthService;
 import com.jatramaya.bibliotech.service.AuthorService;
+import com.jatramaya.bibliotech.service.GenreService;
 import com.jatramaya.bibliotech.service.TagService;
 import com.jatramaya.bibliotech.service.UserService;
 
@@ -48,6 +49,9 @@ public class AdminController {
 
         @Autowired
         private TagService tagService;
+
+        @Autowired
+        private GenreService genreService;
 
         AdminController(UserService userService) {
                 this.userService = userService;
@@ -196,6 +200,15 @@ public class AdminController {
         @DeleteMapping("/tag/{id}")
         public ResponseEntity<?> deleteTag(@PathVariable Long id) {
                 tagService.deleteTag(id);
+
+                return ResponseEntity.ok(Map.of(
+                                "status", "success",
+                                "message", "Tag deleted"));
+        }
+
+        @DeleteMapping("/genre/{id}")
+        public ResponseEntity<?> deleteGenre(@PathVariable Long id) {
+                genreService.deleteGenre(id);
 
                 return ResponseEntity.ok(Map.of(
                                 "status", "success",
