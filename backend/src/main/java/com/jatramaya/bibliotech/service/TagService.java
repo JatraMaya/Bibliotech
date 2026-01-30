@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jatramaya.bibliotech.dto.TagDTO;
 import com.jatramaya.bibliotech.entity.book.TagEntity;
@@ -45,6 +46,7 @@ public class TagService {
         return repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found"));
     }
 
+    @Transactional
     public void deleteTag(Long id) {
         TagEntity tag = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found"));
 
