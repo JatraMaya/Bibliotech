@@ -14,13 +14,7 @@ import com.jatramaya.bibliotech.dto.RegisterResponseDTO;
 import com.jatramaya.bibliotech.dto.UserRegisterDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
-import com.jatramaya.bibliotech.service.AdminService;
-import com.jatramaya.bibliotech.service.AuthService;
-import com.jatramaya.bibliotech.service.AuthorService;
-import com.jatramaya.bibliotech.service.GenreService;
-import com.jatramaya.bibliotech.service.TagService;
-import com.jatramaya.bibliotech.service.UserService;
-
+import com.jatramaya.bibliotech.service.*;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
+        private final BookService bookService;
 
         private final UserService userService;
 
@@ -53,8 +49,9 @@ public class AdminController {
         @Autowired
         private GenreService genreService;
 
-        AdminController(UserService userService) {
+        AdminController(UserService userService, BookService bookService) {
                 this.userService = userService;
+                this.bookService = bookService;
         }
 
         /// Author Related endpoint
@@ -194,6 +191,16 @@ public class AdminController {
                 return ResponseEntity.ok(Map.of(
                                 "status", "Success",
                                 "message", "User deleted successfully"));
+        }
+
+        // Book related endpoint
+        @DeleteMapping("/book/{id}/delete")
+        public ResponseEntity<?> deleteBook(@PathVariable Long id) throws IOException {
+
+                bookService.deleteBook(id);
+                return ResponseEntity.ok(Map.of(
+                                "status", "Success",
+                                "message", "Deleted book data"));
         }
 
         // Tag and Genre Related endpoint
