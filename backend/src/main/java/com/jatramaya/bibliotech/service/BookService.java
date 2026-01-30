@@ -7,6 +7,10 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,6 +95,25 @@ public class BookService {
 
         return new CreateBookResponseDTO(book);
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CreateBookResponseDTO> getAll(int page, int size, String sortBy, String direction) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+        Page<BookEntity> entities = repo.findAll(pageable);
+        return entities.map(CreateBookResponseDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public CreateBookResponseDTO getById(Long id) {
+        BookEntity book = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+
+        CreateBookResponseDTO response = new CreateBookResponseDTO(book);
+        return response;
     }
 
 }
