@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.AddBookCollectionDTO;
+import com.jatramaya.bibliotech.dto.BookCollectionDTO;
 import com.jatramaya.bibliotech.dto.CurrentUserResponseDTO;
+import com.jatramaya.bibliotech.dto.ReviewDTO;
 import com.jatramaya.bibliotech.dto.UpdateUserDTO;
+import com.jatramaya.bibliotech.entity.book.BookStatus;
 import com.jatramaya.bibliotech.entity.user.ProfileEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
 import com.jatramaya.bibliotech.service.AuthService;
@@ -22,11 +25,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -136,4 +141,67 @@ public class UserController {
                 "message", "Succefully add book to collection"));
     }
 
+    @PutMapping("/book/{id}/status")
+    public ResponseEntity<?> updateReadingStatus(@PathVariable Long id, @RequestParam BookStatus status) {
+
+        boolean updated = userBookService.updateReadingStatus(id, status);
+
+        if (updated) {
+            return ResponseEntity.ok(Map.of(
+                    "status", "Success",
+                    "message", "Update reading status to: " + status.name()));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Reading status not updated"));
+
+    }
+
+    @PutMapping("/book/{id}/comment")
+    public ResponseEntity<?> updateReview(@PathVariable Long id, @RequestBody ReviewDTO dto) {
+
+        if (dto.getReview() == null) {
+            throw new IllegalArgumentException("Missing updated review");
+        }
+        boolean updated = userBookService.updateComment(id, dto.getReview().toLowerCase());
+
+        if (updated) {
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "Success",
+                    "message", "Update book review"));
+
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Book Review not updated"));
+
+    }
+
+    @GetMapping("/book/all")
+    public ResponseEntity<?> getAllBooks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<BookCollectionDTO> books = userBookService.getAllCollection(getUser().getId(), page, size);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "data", books.getContent(),
+                "currentPage", books.getNumber(),
+                "totalItems", books.getTotalElements(),
+                "totalPages", books.getTotalPages()));
+
+    }
+
+    @DeleteMapping("/book/{id}")
+    public ResponseEntity<?> removeFromCollection(@PathVariable Long id) {
+        userBookService.removeFromCollection(id);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "message", "Removed book from collection"));
+    }
 }
