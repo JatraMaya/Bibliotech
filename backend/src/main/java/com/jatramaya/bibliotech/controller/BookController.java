@@ -7,12 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.CreateBookDTO;
 import com.jatramaya.bibliotech.dto.CreateBookResponseDTO;
-import com.jatramaya.bibliotech.entity.book.BookEntity;
 import com.jatramaya.bibliotech.service.BookService;
 
 import jakarta.validation.Valid;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,23 @@ public class BookController {
                 "book", book));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchBooks(
+            @RequestParam(required = false) List<Long> authorIds,
+            @RequestParam(required = false) List<Long> genreIds,
+            @RequestParam(required = false) List<Long> tagIds,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<CreateBookResponseDTO> books = service.searchBooks(authorIds, genreIds, tagIds, page, size);
+        return ResponseEntity.ok(Map.of(
+                "status", "Success",
+                "data", books.getContent(),
+                "currentPage", books.getNumber(),
+                "totalItems", books.getTotalElements(),
+                "totalPages", books.getTotalPages()));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -62,15 +79,12 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBook(@PathVariable Long id) {
-        BookEntity book = service.getById(id);
-
-        CreateBookResponseDTO response = new CreateBookResponseDTO(book);
+        CreateBookResponseDTO book = service.getById(id);
 
         return ResponseEntity.ok(Map.of(
-            "status", "Success",
-            "message", "Succes get book data",
-            "book", response
-        ));
+                "status", "Success",
+                "message", "Succes get book data",
+                "book", book));
     }
-    
+
 }
