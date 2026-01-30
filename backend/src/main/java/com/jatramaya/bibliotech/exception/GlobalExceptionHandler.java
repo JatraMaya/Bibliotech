@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import io.jsonwebtoken.io.IOException;
 
@@ -90,6 +91,13 @@ public class GlobalExceptionHandler {
                                 "message", errors);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(response);
+        }
+
+        @ExceptionHandler(NoResourceFoundException.class)
+        public ResponseEntity<?> handleNoResourceFound(NoResourceFoundException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                                "status", "error",
+                                "message", "Missing required parameter of id"));
         }
 
 }
