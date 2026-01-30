@@ -134,4 +134,15 @@ public class BookService {
         });
     }
 
+    @Transactional
+    public void deleteBook(Long Id) throws IOException {
+        BookEntity book = repo.findById(Id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+
+        if (book.getCoverUrl() != null) {
+            imgService.deleteAvatar(book.getCoverUrl());
+        }
+
+        repo.delete(book);
+    }
+
 }
