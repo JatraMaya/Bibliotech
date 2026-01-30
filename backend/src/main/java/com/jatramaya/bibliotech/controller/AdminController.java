@@ -212,7 +212,7 @@ public class AdminController {
 
                 return ResponseEntity.ok(Map.of(
                                 "status", "success",
-                                "message", "Tag deleted"));
+                                "message", "Genre deleted"));
         }
 
 }
