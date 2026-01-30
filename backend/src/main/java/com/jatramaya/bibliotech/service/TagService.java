@@ -21,11 +21,13 @@ public class TagService {
 
     public TagEntity createNewTag(String name) {
 
-        if (repo.existsByName(name))
+        String tagLowerCase = name.toLowerCase();
+
+        if (repo.existsByName(tagLowerCase))
             throw new DataIntegrityViolationException("Tag already exist");
 
         TagEntity tag = new TagEntity();
-        tag.setName(name);
+        tag.setName(tagLowerCase);
         return repo.save(tag);
     }
 
