@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jatramaya.bibliotech.dto.AddAuthorDTO;
 import com.jatramaya.bibliotech.dto.RegisterResponseDTO;
+import com.jatramaya.bibliotech.dto.UpdateBookDTO;
 import com.jatramaya.bibliotech.dto.UserRegisterDTO;
 import com.jatramaya.bibliotech.entity.book.AuthorEntity;
 import com.jatramaya.bibliotech.entity.user.UserEntity;
@@ -201,6 +202,25 @@ public class AdminController {
                 return ResponseEntity.ok(Map.of(
                                 "status", "Success",
                                 "message", "Deleted book data"));
+        }
+
+        @PutMapping("/book/{id}/update")
+        public ResponseEntity<?> updateBook(
+                        @PathVariable Long id,
+                        @Valid @ModelAttribute UpdateBookDTO dto,
+                        @RequestParam(required = false) MultipartFile cover) throws IOException {
+
+                boolean updated = bookService.updateBook(id, dto, cover);
+
+                if (updated) {
+                        return ResponseEntity.ok(Map.of(
+                                        "status", "Success",
+                                        "message", "Successfully update book data"));
+                }
+
+                return ResponseEntity.ok(Map.of(
+                                "status", "Success",
+                                "message", "Book data not updated"));
         }
 
         // Tag and Genre Related endpoint
