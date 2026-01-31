@@ -3,6 +3,8 @@ package com.jatramaya.bibliotech.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,8 @@ public interface UserBookRepository extends JpaRepository<UserBookEntity, Long> 
     Optional<UserBookEntity> findByUserIdAndBookId(UUID userId, Long bookId);
 
     boolean existsByUserIdAndBookId(UUID userId, Long bookId);
+
+    Optional<UserBookEntity> findByUserIdAndId(UUID userId, Long id);
+
+    Page<UserBookEntity> findAllByUserId(UUID userId, Pageable pageable);
 }
