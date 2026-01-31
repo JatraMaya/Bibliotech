@@ -1,4 +1,9 @@
-import type { LoginRequest, LoginResponse } from '../types/authType';
+import type {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from '../types/authType';
 import type { User } from '../types/UserType';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,11 +17,28 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
     body: JSON.stringify(data),
   });
 
+  const result = await response.json();
+
   if (!response.ok) {
-    throw new Error('Login failed');
+    throw new Error(result.message || 'Login failed');
   }
 
-  return response.json();
+  return result;
+};
+
+export const register = async (
+  data: RegisterRequest,
+): Promise<RegisterResponse> => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message);
+  }
+  return result;
 };
 
 export const getUserData = async (token: string): Promise<User> => {
