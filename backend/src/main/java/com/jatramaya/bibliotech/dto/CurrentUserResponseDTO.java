@@ -16,6 +16,7 @@ public class CurrentUserResponseDTO {
     private String fullname;
     private String avatarUrl;
     private String bio;
+    private String role;
 
     public CurrentUserResponseDTO(UserEntity user) {
 
@@ -32,6 +33,8 @@ public class CurrentUserResponseDTO {
             setAvatarUrl(user.getProfile().getAvatarUrl());
             setBio(user.getProfile().getBio());
         }
+
+        setRole(user.getRole().name());
 
     }
 
