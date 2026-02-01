@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
+import Dashboard from '../components/Dashboard';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -33,10 +35,24 @@ export default function AppRoutes() {
         />
 
         <Route
+          path="/register"
+          element={
+            isAuthenticated ? (
+              <Navigate
+                to={user?.role === 'ADMIN' ? '/admin' : '/dashboard'}
+                replace
+              />
+            ) : (
+              <RegisterForm />
+            )
+          }
+        />
+
+        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <div>Dashboard</div>
+              <Dashboard />
             </ProtectedRoute>
           }
         />
