@@ -3,7 +3,7 @@ import { useLogin } from '../hooks/useLogin';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
-  const { mutate: loginMutation, isPending, isError } = useLogin();
+  const { mutate: loginMutation } = useLogin();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -26,35 +26,30 @@ export default function LoginForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Email</span>
+                <label className="floating-label">
+                  <span>Username</span>
+                  <input
+                    type="text"
+                    placeholder="Enter your username"
+                    className="input input-bordered"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
                 </label>
-                <input
-                  type="text"
-                  placeholder="Enter your username"
-                  className="input input-bordered"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
               </div>
 
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Password</span>
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  className="input input-bordered"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
-                    Forgot password?
-                  </a>
+                <label className="floating-label">
+                  <span>Password</span>
+                  <input
+                    type="password"
+                    placeholder="Enter your password"
+                    className="input input-bordered"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
                 </label>
               </div>
 
