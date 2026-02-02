@@ -12,13 +12,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BookCollectionDTO {
 
+    private Long id;
     private String bookTitle;
+    private String coverUrl;
     private String comment;
     private BookStatus readingStatus;
 
     public BookCollectionDTO(UserBookEntity book) {
+        id = book.getBook().getId();
         bookTitle = book.getBook().getTitle();
         comment = book.getComment();
         readingStatus = book.getReadingStatus();
+        coverUrl = book.getBook().getCoverUrl();
     }
 }
