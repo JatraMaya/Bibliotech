@@ -84,10 +84,12 @@ public class AuthorController {
 
         AuthorEntity author = service.createAuthor(dto, profilePic);
 
+        AddAuthorResponseDTO response = new AddAuthorResponseDTO(author);
+
         return ResponseEntity.ok(Map.of(
                 "status", "Success",
                 "message", "Author add succesfully",
-                "author", author));
+                "author", response));
 
     }
 }
