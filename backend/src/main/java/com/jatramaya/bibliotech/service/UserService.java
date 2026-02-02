@@ -120,7 +120,7 @@ public class UserService {
 
         UserEntity user = getCurrentUser(username);
 
-        if (user.getProfile().getAvatarUrl() != null) {
+        if (user.getProfile() != null && user.getProfile().getAvatarUrl() != null) {
             imageService.deleteAvatar(user.getProfile().getAvatarUrl());
         }
 
