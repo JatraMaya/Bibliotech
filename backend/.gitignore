@@ -34,3 +34,5 @@ build/
 
 ### Upload directory ###
 upload/
+
+run-server.sh
