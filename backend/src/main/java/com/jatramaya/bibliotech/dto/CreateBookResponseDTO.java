@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateBookResponseDTO {
 
+        private Long id;
         private String title;
         private String coverUrl;
         private Set<AddAuthorResponseDTO> authors;
@@ -21,6 +22,7 @@ public class CreateBookResponseDTO {
         private Set<GenericDTOResponse> tags;
 
         public CreateBookResponseDTO(BookEntity book) {
+                id = book.getId();
                 title = book.getTitle();
 
                 authors = new HashSet<>(
