@@ -6,7 +6,7 @@ import { useToastStore } from '../store/toastStore';
 import type { LoginRequest } from '../types/authType';
 
 export const useLogin = () => {
-  const login = useAuthStore((state) => state.login);
+  const setSession = useAuthStore((state) => state.setSession);
   const navigate = useNavigate();
   const showToast = useToastStore((state) => state.show);
 
@@ -23,7 +23,7 @@ export const useLogin = () => {
     },
     onSuccess: (data) => {
       showToast('success', data.message);
-      login(data.user, data.token);
+      setSession(data.user, data.token);
 
       navigate(data.user.role === 'ADMIN' ? '/admin' : '/dashboard');
     },
