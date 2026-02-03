@@ -5,8 +5,9 @@ import type {
   RegisterResponse,
 } from '../types/authType';
 import type { User } from '../types/UserType';
+import { getApiPath } from '../utils/utils';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = getApiPath();
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await fetch(`${API_URL}/auth/login`, {
@@ -40,7 +41,7 @@ export const register = async (
   const result = await response.json();
 
   if (!response.ok) {
-    throw result
+    throw result;
   }
   return result;
 };
