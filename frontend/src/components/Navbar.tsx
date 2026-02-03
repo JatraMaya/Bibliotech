@@ -1,9 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import Avatar from './Avatar';
 
 export default function Navbar() {
-  const logout = useAuthStore((s) => s.logout);
+  const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -12,6 +14,18 @@ export default function Navbar() {
     queryClient.clear();
     navigate('/login', { replace: true });
   };
+
+  const handleToProfile = () => {
+    navigate('/profile');
+  };
+
+  const handleToDashboard = () => {
+    navigate('/dashboard');
+  };
+
+  function navigateBook() {
+    navigate('/book', { replace: true });
+  }
 
   return (
     <div className="navbar bg-base-100 shadow-sm">
@@ -39,74 +53,51 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Item 1</a>
+              <a onClick={navigateBook}>Add Book Collection</a>
             </li>
             <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>Item 3</a>
+              <a>Add Book Review</a>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">Bibliotech</a>
+        <a className="btn btn-ghost text-xl" onClick={handleToDashboard}>
+          Bibliotech
+        </a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Item 1</a>
+            <a onClick={navigateBook}>Add Book Collection</a>
           </li>
           <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2 bg-base-100 w-40 z-1">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a>Item 3</a>
+            <a>Add Book review</a>
           </li>
         </ul>
       </div>
 
       {/* Avatar Image */}
       <div className="navbar-end mr-3">
-        <div className="dropdown dropdown-end">
+        <div className="dropdown dropdown-end z-50">
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost btn-circle avatar"
+            className="btn btn-ghost btn-circle avatar w-10"
           >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
+            <Avatar fullname={user?.fullname} avatarImg={user?.avatarUrl} />
           </div>
           <ul
             tabIndex={-1}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 p-2 shadow"
           >
             <li>
-              <a className="justify-between">Profile</a>
+              <a onClick={handleToProfile} className="justify-end">
+                Profile
+              </a>
             </li>
             <li>
-              <a onClick={handleLogout}>Logout</a>
+              <a onClick={handleLogout} className="justify-end">
+                Logout
+              </a>
             </li>
           </ul>
         </div>
