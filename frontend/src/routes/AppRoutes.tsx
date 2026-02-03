@@ -3,6 +3,8 @@ import { useAuthStore } from '../store/authStore';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import Dashboard from '../components/Dashboard';
+import Profile from '../components/Profile';
+import AddbookPage from '../components/AddBookPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -61,7 +63,25 @@ export default function AppRoutes() {
           path="/admin"
           element={
             <ProtectedRoute>
-              <div>Admin Area</div>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/book"
+          element={
+            <ProtectedRoute>
+              <AddbookPage />
             </ProtectedRoute>
           }
         />
